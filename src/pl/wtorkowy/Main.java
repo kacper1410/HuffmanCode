@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) throws UnknownHostException {
         String host = InetAddress.getLocalHost().getHostName();
-        int port = 5000;
+        int port = 80;
         Thread thread;
 
         Scanner in = new Scanner(System.in);
