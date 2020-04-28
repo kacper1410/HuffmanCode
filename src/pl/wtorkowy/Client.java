@@ -27,7 +27,6 @@ public class Client implements Runnable {
             System.out.println("Client is starting on host " + InetAddress.getLocalHost().getHostAddress());
             socket = new Socket(host, port);
 
-            in = new ObjectInputStream(socket.getInputStream());
             out = new ObjectOutputStream(socket.getOutputStream());
             out.flush();
 
@@ -35,7 +34,6 @@ public class Client implements Runnable {
 
             socket.close();
             out.close();
-            in.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

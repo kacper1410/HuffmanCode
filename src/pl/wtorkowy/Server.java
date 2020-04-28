@@ -7,19 +7,18 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server implements Runnable {
-    private int port;
-    private ServerSocket server;
+    private ServerSocket serverSocket;
     private Socket socket;
-    private String host;
 
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public Server(int port, String host) throws IOException {
-        this.port = port;
-        this.host = host;
-
-        server = new ServerSocket(port);
+    public Server(int port) {
+        try {
+            serverSocket = new ServerSocket(port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -28,15 +27,11 @@ public class Server implements Runnable {
 
         while (true) {
             try {
-                socket = server.accept();
+                socket = serverSocket.accept();
 
-                out = new ObjectOutputStream(socket.getOutputStream());
-                out.flush();
                 in = new ObjectInputStream(socket.getInputStream());
-
                 System.out.println((Message)in.readObject());
 
-                out.close();
                 in.close();
                 socket.close();
             } catch (Exception e) {
