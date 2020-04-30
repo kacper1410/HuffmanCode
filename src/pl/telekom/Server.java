@@ -1,4 +1,4 @@
-package pl.wtorkowy;
+package pl.telekom;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

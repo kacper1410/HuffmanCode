@@ -1,4 +1,4 @@
-package pl.wtorkowy;
+package pl.telekom;
 
 import java.io.Serializable;
 import java.util.Date;
