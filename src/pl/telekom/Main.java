@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws UnknownHostException {
-        HuffmanCode h = new HuffmanCode("jakas wiadomosc");
+        HuffmanCode h = new HuffmanCode("jakas wiadomosccc");
         h.code();
 //        String host = InetAddress.getLocalHost().getHostName();
 //        int port = 5000;
