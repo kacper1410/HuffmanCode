@@ -12,12 +12,14 @@ public class HuffmanCode {
     private ArrayList<Node> rootNodes;
     private ArrayList<Element> dictionary;
     private ArrayList<Byte> compressed;
+    private ArrayList<Byte> decompressed;
     private byte[] message;
 
     public HuffmanCode() {
         this.rootNodes = new ArrayList<Node>();
         this.dictionary = new ArrayList<Element>();
         this.compressed = new ArrayList<Byte>();
+        this.decompressed = new ArrayList<Byte>();
     }
 
     public void code(String toCompress, String compressedFile, String dictionaryFile) throws IOException {
@@ -75,9 +77,8 @@ public class HuffmanCode {
     }
 
     public void decode(String decompressedFile, String compressedFile, String dictionaryFile) throws IOException {
-        rootNodes.clear();
         dictionary.clear();
-        compressed.clear();
+        decompressed.clear();
 
         byte[] compressedBytes = Files.readAllBytes(Paths.get(compressedFile));
         byte[] dictionaryBytes = Files.readAllBytes(Paths.get(dictionaryFile));
@@ -90,14 +91,57 @@ public class HuffmanCode {
             }
             dictionary.add(new Element(dictionaryBytes[i], key));
             i += j - i;
-
         }
 
 //        for (Element e : dictionary) {
 //            System.out.println("Value: " +(char) e.getValue() + "  Key: " + e.getKey());
 //        }
 
+        byte offset = compressedBytes[0];
+        String currentKey = "";
+        for (int i = 1; i < compressedBytes.length - 1; i++) {
+            for (int j = 0; j < 8; j++) {
+                byte shiftedByte = (byte) (compressedBytes[i]<<j);
+                if (shiftedByte < 0) {
+                    currentKey += '1';
+                } else {
+                    currentKey += '0';
+                }
 
+                for (Element e : dictionary) {
+                    if (currentKey.equals(e.getKey())) {
+                        decompressed.add(e.getValue());
+                        currentKey = "";
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < offset; i++) {
+            byte shiftedByte = (byte) (compressedBytes[compressedBytes.length - 1]<<i);
+            if (shiftedByte < 0) {
+                currentKey += '1';
+            } else {
+                currentKey += '0';
+            }
+
+            for (Element e : dictionary) {
+                if (currentKey.equals(e.getKey())) {
+                    decompressed.add(e.getValue());
+                    currentKey = "";
+                }
+            }
+        }
+
+//        for (byte b : decompressed) {
+//            System.out.print((char)b);
+//        }
+
+        FileOutputStream outStream = new FileOutputStream(decompressedFile, false);
+        for (byte b : decompressed) {
+            outStream.write(b);
+        }
+        outStream.close();
 
     }
 

@@ -9,9 +9,11 @@ public class Main {
 
     public static void main(String[] args) throws UnknownHostException {
 
+
         HuffmanCode h = new HuffmanCode();
         try {
-            h.decode("plik", "plik2", "slownik");
+            h.code("pdf.pdf", "skompresowany", "slownik");
+            h.decode("dekompresja", "skompresowany", "slownik");
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

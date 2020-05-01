@@ -1,1 +1,17 @@
-jakas wiadomosccc
+Ćwiczenia polega na zaimplementowaniu algorytmu statycznego kodowania Huffmana w programie, który przesyła plik za pomocą
+gniazd sieciowych na inny komputer. Algorytm ten jest wykorzystywany często jako ostatni etap w różnych systemach kopresji
+danych. Takiej jak MP3 lub JPEG.
+Gniazdo sieciowe jest to para, adres IP oraz numer portu. Numer portu działa w warstwie transportowej modelu sieciowego TCP/IP.
+Port identyfikuje proces, który wymienia dane przez gniazdo. Dzięki numerowi portu można zidentyfikować do którego procesu
+mają trafić pakiety.
+Kodowanie Huffmana służy do bezstratnej kompresji danych. Algorytm ten nie jest efektywny obliczeniowo.
+Zadanie algorytmu jest utworzenie słownika słów kodowych, który zawiera słowa kodowe dla danych znaków (bajtów). Im częściej
+dany znak występuje, tym krótsze jest jego słowo kodowe.
+Do tego celu na początku liczone jest prawdopodobieństwo (czyli ilość wystąpienia) danego znaku. Posiadając prawdopodobieństwo
+wystąpienia danego znaku, układane jest rosnąco drzewo binarne, które zawiera dany znak oraz jego prawdopodobieństwo. Dopóki
+drzewo posiada więcej niż jeden korzeń, dwa korzenie o najmniejszych prawdopodobieństwach są ze sobą sumowane i wstawiane
+do drzewa przypisując lewej gałęzi 0, a prawej 1. Długość słowa kodowanego jest równa głębokości znaku w drzewie, a jego
+wartość zależy od położenia w drzewie.
+Kodowanie pliku polega na zastąpieniu danych znaków, słowami kodowymi utworzonymi za pomocą algorytmu Huffmana. Do
+odkodowania takiego pliku potrzebny jest słownik kodowy, który jest przesyłany razem z plikiem. Proces dekompresji polega na
+zamianie zakodowanych znaków na konkretne bajty.
