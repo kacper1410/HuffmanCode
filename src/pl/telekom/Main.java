@@ -11,10 +11,11 @@ public class Main {
 
         HuffmanCode h = new HuffmanCode();
         try {
-            h.code("plik");
+            h.code("plik", "plik2");
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+
 //        String host = InetAddress.getLocalHost().getHostName();
 //        int port = 5000;
 //        Thread thread;

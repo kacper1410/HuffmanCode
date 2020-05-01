@@ -1,10 +1,12 @@
 package pl.telekom;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -20,16 +22,17 @@ public class HuffmanCode {
         this.compressed = new ArrayList<Byte>();
     }
 
-    public void code(String pathToFile) throws IOException {
+    public void code(String pathToFile, String saveTo) throws IOException {
 
         message = Files.readAllBytes(Paths.get(pathToFile));
 
         calculateProbabilities();
-        Collections.sort(rootNodes);
+
 //        for (Node n :
 //                rootNodes) {
 //            System.out.println("Value: " + (char) n.getValue() + ", probability: " + n.getProbability());
 //        }
+
         constructTree();
 
         createDictionary(rootNodes.get(0), "");
@@ -38,38 +41,27 @@ public class HuffmanCode {
 //                dictionary) {
 //            System.out.println("Value: " + (char) e.getValue() + "  Key: " + e.getKey());
 //        }
-        byte currentByte = 0;
-        int count = 0;
-        for (byte byteOfMessage : message) {
-            for (Element elem : dictionary) {
-                if (elem.getValue() == byteOfMessage) {
-                    for (char bit : elem.getKey().toCharArray()) {
-                        currentByte *= 2;
-                        if (bit == '1') {
-                            currentByte += 1;
-                        }
-                        count++;
-                        if (count == 8) {
-                            compressed.add(currentByte);
-                            count = 0;
-                            currentByte = 0;
-                        }
-                    }
-                    break;
-                }
-            }
+
+        compress();
+
+//        for (byte compressedByte : compressed) {
+//            System.out.println("Compressed byte: " + compressedByte);
+//        }
+
+        System.out.println((compressed));
+        char[] compressedChars = new char[compressed.size()];
+
+        FileWriter writer = new FileWriter(saveTo, false);
+        for (int i = 0; i < compressedChars.length; i++) {
+            byte b = compressed.get(i);
+            System.out.println(b);
+            compressedChars[i] =  (char) b;
+            System.out.println((byte)compressedChars[i]);
         }
-        compressed.add(0, (byte)count);
-        if (count != 0) {
-            while (count != 8) {
-                currentByte *= 2;
-                count++;
-            }
-            compressed.add(currentByte);
-        }
-        for (byte compressedByte : compressed) {
-            System.out.println("Compressed byte: " + compressedByte);
-        }
+        writer.write(compressedChars);
+        writer.close();
+
+        System.out.println(Arrays.toString(Files.readAllBytes(Paths.get(saveTo))));
 
     }
 
@@ -128,5 +120,35 @@ public class HuffmanCode {
         createDictionary(node.getRightNode(), key + "1");
     }
 
-
+    private void compress() {
+        byte currentByte = 0;
+        int count = 0;
+        for (byte byteOfMessage : message) {
+            for (Element elem : dictionary) {
+                if (elem.getValue() == byteOfMessage) {
+                    for (char bit : elem.getKey().toCharArray()) {
+                        currentByte *= 2;
+                        if (bit == '1') {
+                            currentByte += 1;
+                        }
+                        count++;
+                        if (count == 8) {
+                            compressed.add(currentByte);
+                            count = 0;
+                            currentByte = 0;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        compressed.add(0, (byte)count);
+        if (count != 0) {
+            while (count != 8) {
+                currentByte *= 2;
+                count++;
+            }
+            compressed.add(currentByte);
+        }
+    }
 }
