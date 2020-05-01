@@ -11,7 +11,7 @@ public class Main {
 
         HuffmanCode h = new HuffmanCode();
         try {
-            h.code("plik", "plik2");
+            h.decode("plik", "plik2", "slownik");
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

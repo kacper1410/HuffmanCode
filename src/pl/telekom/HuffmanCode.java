@@ -1,13 +1,11 @@
 package pl.telekom;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 public class HuffmanCode {
@@ -22,9 +20,13 @@ public class HuffmanCode {
         this.compressed = new ArrayList<Byte>();
     }
 
-    public void code(String pathToFile, String saveTo) throws IOException {
+    public void code(String toCompress, String compressedFile, String dictionaryFile) throws IOException {
+        rootNodes.clear();
+        dictionary.clear();
+        compressed.clear();
 
-        message = Files.readAllBytes(Paths.get(pathToFile));
+
+        message = Files.readAllBytes(Paths.get(toCompress));
 
         calculateProbabilities();
 
@@ -37,9 +39,8 @@ public class HuffmanCode {
 
         createDictionary(rootNodes.get(0), "");
 
-//        for (Element e :
-//                dictionary) {
-//            System.out.println("Value: " + (char) e.getValue() + "  Key: " + e.getKey());
+//        for (Element e : dictionary) {
+//            System.out.println("Value: " + e.getValue() + "  Key: " + e.getKey());
 //        }
 
         compress();
@@ -48,20 +49,55 @@ public class HuffmanCode {
 //            System.out.println("Compressed byte: " + compressedByte);
 //        }
 
-        System.out.println((compressed));
-        char[] compressedChars = new char[compressed.size()];
+//        System.out.println((compressed));
 
-        FileWriter writer = new FileWriter(saveTo, false);
-        for (int i = 0; i < compressedChars.length; i++) {
-            byte b = compressed.get(i);
-            System.out.println(b);
-            compressedChars[i] =  (char) b;
-            System.out.println((byte)compressedChars[i]);
+        FileOutputStream outStream = new FileOutputStream(compressedFile, false);
+        for (byte b : compressed) {
+            outStream.write(b);
         }
-        writer.write(compressedChars);
-        writer.close();
+        outStream.close();
 
-        System.out.println(Arrays.toString(Files.readAllBytes(Paths.get(saveTo))));
+        outStream = new FileOutputStream(dictionaryFile, false);
+        for (Element e : dictionary) {
+            outStream.write(e.getValue());
+            for (char bit : e.getKey().toCharArray()) {
+                outStream.write((byte)bit);
+            }
+            outStream.write(0);
+        }
+        outStream.close();
+
+
+//        System.out.println(Arrays.toString(Files.readAllBytes(Paths.get(compressedFile))));
+
+//        System.out.println(Arrays.toString(Files.readAllBytes(Paths.get(dictionaryFile))));
+
+    }
+
+    public void decode(String decompressedFile, String compressedFile, String dictionaryFile) throws IOException {
+        rootNodes.clear();
+        dictionary.clear();
+        compressed.clear();
+
+        byte[] compressedBytes = Files.readAllBytes(Paths.get(compressedFile));
+        byte[] dictionaryBytes = Files.readAllBytes(Paths.get(dictionaryFile));
+
+        for (int i = 0; i < dictionaryBytes.length - 1; i++) {
+            String key = "";
+            int j = i + 1;
+            for (; dictionaryBytes[j] != 0; j++) {
+                key += (char) dictionaryBytes[j];
+            }
+            dictionary.add(new Element(dictionaryBytes[i], key));
+            i += j - i;
+
+        }
+
+//        for (Element e : dictionary) {
+//            System.out.println("Value: " +(char) e.getValue() + "  Key: " + e.getKey());
+//        }
+
+
 
     }
 
