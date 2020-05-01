@@ -1,5 +1,9 @@
 package pl.telekom;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,16 +12,18 @@ public class HuffmanCode {
     private ArrayList<Node> rootNodes;
     private ArrayList<Element> dictionary;
     private ArrayList<Byte> compressed;
-    private final String message;
+    private byte[] message;
 
-    public HuffmanCode(String message) {
-        this.message = message;
+    public HuffmanCode() {
         this.rootNodes = new ArrayList<Node>();
         this.dictionary = new ArrayList<Element>();
         this.compressed = new ArrayList<Byte>();
     }
 
-    public void code() {
+    public void code(String pathToFile) throws IOException {
+
+        message = Files.readAllBytes(Paths.get(pathToFile));
+
         calculateProbabilities();
         Collections.sort(rootNodes);
 //        for (Node n :
@@ -32,54 +38,53 @@ public class HuffmanCode {
 //                dictionary) {
 //            System.out.println("Value: " + (char) e.getValue() + "  Key: " + e.getKey());
 //        }
-        byte b = 0;
+        byte currentByte = 0;
         int count = 0;
-        for (char c : message.toCharArray()) {
-            for (Element e : dictionary) {
-                if (e.getValue() == c) {
-                    for (char bit : e.getKey().toCharArray()) {
-                        b *= 2;
+        for (byte byteOfMessage : message) {
+            for (Element elem : dictionary) {
+                if (elem.getValue() == byteOfMessage) {
+                    for (char bit : elem.getKey().toCharArray()) {
+                        currentByte *= 2;
                         if (bit == '1') {
-                           b += 1;
+                            currentByte += 1;
                         }
                         count++;
                         if (count == 8) {
-                            compressed.add(b);
+                            compressed.add(currentByte);
                             count = 0;
-                            b = 0;
+                            currentByte = 0;
                         }
                     }
                     break;
                 }
             }
         }
+        compressed.add(0, (byte)count);
         if (count != 0) {
-            compressed.add(0, (byte)count);
             while (count != 8) {
-                b *= 2;
+                currentByte *= 2;
                 count++;
             }
-            compressed.add(b);
+            compressed.add(currentByte);
         }
-        for (byte by :
-                compressed) {
-            System.out.println("Compressed byte: " + by);
+        for (byte compressedByte : compressed) {
+            System.out.println("Compressed byte: " + compressedByte);
         }
 
     }
 
     private void calculateProbabilities() {
         boolean exist = false;
-        for (char c : message.toCharArray()) {
+        for (byte b : message) {
             for (Node n : rootNodes) {
-                if (n.getValue() == (byte) c) {
+                if (n.getValue() == b) {
                     n.incrementProbability();
                     exist = true;
                     break;
                 }
             }
             if (!exist) {
-                rootNodes.add(new Node((byte) c));
+                rootNodes.add(new Node(b));
             }
             exist = false;
         }

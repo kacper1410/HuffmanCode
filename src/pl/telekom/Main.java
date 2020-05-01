@@ -1,5 +1,6 @@
 package pl.telekom;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -7,8 +8,13 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws UnknownHostException {
-        HuffmanCode h = new HuffmanCode("jakas wiadomosccc");
-        h.code();
+
+        HuffmanCode h = new HuffmanCode();
+        try {
+            h.code("plik");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
 //        String host = InetAddress.getLocalHost().getHostName();
 //        int port = 5000;
 //        Thread thread;
