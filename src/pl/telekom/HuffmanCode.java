@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class HuffmanCode {
@@ -27,31 +26,14 @@ public class HuffmanCode {
         dictionary.clear();
         compressed.clear();
 
-
         message = Files.readAllBytes(Paths.get(toCompress));
 
         calculateProbabilities();
-
-//        for (Node n :
-//                rootNodes) {
-//            System.out.println("Value: " + (char) n.getValue() + ", probability: " + n.getProbability());
-//        }
-
         constructTree();
 
         createDictionary(rootNodes.get(0), "");
 
-//        for (Element e : dictionary) {
-//            System.out.println("Value: " + e.getValue() + "  Key: " + e.getKey());
-//        }
-
         compress();
-
-//        for (byte compressedByte : compressed) {
-//            System.out.println("Compressed byte: " + compressedByte);
-//        }
-
-//        System.out.println((compressed));
 
         FileOutputStream outStream = new FileOutputStream(compressedFile, false);
         for (byte b : compressed) {
@@ -68,12 +50,6 @@ public class HuffmanCode {
             outStream.write(0);
         }
         outStream.close();
-
-
-//        System.out.println(Arrays.toString(Files.readAllBytes(Paths.get(compressedFile))));
-
-//        System.out.println(Arrays.toString(Files.readAllBytes(Paths.get(dictionaryFile))));
-
     }
 
     public void decode(String decompressedFile, String compressedFile, String dictionaryFile) throws IOException {
@@ -92,10 +68,6 @@ public class HuffmanCode {
             dictionary.add(new Element(dictionaryBytes[i], key));
             i += j - i;
         }
-
-//        for (Element e : dictionary) {
-//            System.out.println("Value: " +(char) e.getValue() + "  Key: " + e.getKey());
-//        }
 
         byte offset = compressedBytes[0];
         String currentKey = "";
@@ -133,10 +105,6 @@ public class HuffmanCode {
             }
         }
 
-//        for (byte b : decompressed) {
-//            System.out.print((char)b);
-//        }
-
         FileOutputStream outStream = new FileOutputStream(decompressedFile, false);
         for (byte b : decompressed) {
             outStream.write(b);
@@ -163,10 +131,6 @@ public class HuffmanCode {
     }
 
     private void constructTree() {
-//        for (Node n :
-//                rootNodes) {
-//            System.out.println("Value: " + n.getValue() + ", probability: " + n.getProbability());
-//        }
         while (rootNodes.size() > 1) {
             Collections.sort(rootNodes);
             Node firstNode = rootNodes.get(0);
@@ -178,10 +142,6 @@ public class HuffmanCode {
             root.setRightNode(secondNode);
             rootNodes.add(root);
         }
-//        System.out.println(rootNodes.get(0).getProbability());
-//
-//        System.out.println(firstNode.getValue());
-//        System.out.println(secondNode.getValue());
     }
 
     private void createDictionary(Node node, String key) {

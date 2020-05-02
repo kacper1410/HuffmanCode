@@ -1,39 +1,53 @@
 package pl.telekom;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
+import java.io.*;
 import java.net.Socket;
 
 public class Client implements Runnable {
     private int port;
     private Socket socket;
     private String host;
-    private Message message;
+    private String xd;
 
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
+    private InputStream in;
 
-    public Client(int port, String host, Message message) {
+    public Client(int port, String host, String xd) {
         this.port = port;
         this.host = host;
-        this.message = message;
+        this.xd = xd;
     }
 
     @Override
     public void run() {
         try {
-            System.out.println("Client is starting on host " + InetAddress.getLocalHost().getHostAddress());
+            int bytesRead;
+            int current;
+
             socket = new Socket(host, port);
 
-            out = new ObjectOutputStream(socket.getOutputStream());
-            out.flush();
+            byte[] byteArray  = new byte [999999];
 
-            out.writeObject(message);
+            FileOutputStream fos = new FileOutputStream(xd);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
 
+            in = socket.getInputStream();
+
+            bytesRead = in.read(byteArray,0, byteArray.length);
+            current = bytesRead;
+
+            do {
+                bytesRead = in.read(byteArray, current, (byteArray.length - current));
+                if (bytesRead >= 0) {
+                    current += bytesRead;
+                }
+            } while (bytesRead > -1);
+
+            bos.write(byteArray, 0 , current);
+            bos.flush();
+
+            fos.close();
+            bos.close();
             socket.close();
-            out.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

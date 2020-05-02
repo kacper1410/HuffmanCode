@@ -1,8 +1,6 @@
 package pl.telekom;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -10,11 +8,14 @@ public class Server implements Runnable {
     private ServerSocket serverSocket;
     private Socket socket;
 
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
+    private OutputStream out;
 
-    public Server(int port) {
+    private String xd = "dictionary";
+
+    public Server(int port, String path) {
         try {
+            HuffmanCode huffmanCode = new HuffmanCode();
+            huffmanCode.code(path, "compressed", "dictionary");
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
             e.printStackTrace();
@@ -27,12 +28,32 @@ public class Server implements Runnable {
 
         while (true) {
             try {
+                File file;
+
                 socket = serverSocket.accept();
 
-                in = new ObjectInputStream(socket.getInputStream());
-                System.out.println((Message)in.readObject());
+                if ("dictionary".equals(xd)) {
+                    xd = "compressed";
+                } else {
+                    xd = "dictionary";
+                }
 
-                in.close();
+                file = new File (xd);
+                byte[] byteArray  = new byte [(int)file.length()];
+
+                FileInputStream fis = new FileInputStream(file);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+
+                bis.read(byteArray,0, byteArray.length);
+
+                out = socket.getOutputStream();
+
+                System.out.println("Sending file...");
+                out.write(byteArray,0, byteArray.length);
+                out.flush();
+
+                fis.close();
+                bis.close();
                 socket.close();
             } catch (Exception e) {
                 e.printStackTrace();

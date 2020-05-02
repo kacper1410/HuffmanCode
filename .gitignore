@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 /out
+
+dictionary
+
+compressed
